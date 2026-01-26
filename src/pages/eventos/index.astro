@@ -1,0 +1,214 @@
+---
+// Archivo: src/pages/eventos/index.astro
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  ArrowRight,
+  History,
+  CalendarDays,
+  Sparkles,
+  Search
+} from 'lucide-react';
+
+const allEventos = await getCollection('eventos');
+const now = new Date();
+
+// 1. Eventos Próximos
+const proximos = allEventos
+    .filter(e => e.data.fechaHora >= now)
+    .sort((a, b) => a.data.fechaHora.valueOf() - b.data.fechaHora.valueOf());
+
+// 2. Eventos Pasados
+const pasados = allEventos
+    .filter(e => e.data.fechaHora < now)
+    .sort((a, b) => b.data.fechaHora.valueOf() - a.data.fechaHora.valueOf());
+---
+
+<Layout title="Agenda de Eventos | Ingeniería de Sistemas">
+
+  <style>
+    /* Animaciones suaves */
+    @keyframes float-slow {
+      0% { transform: translate(0px, 0px); }
+      50% { transform: translate(15px, -15px); }
+      100% { transform: translate(0px, 0px); }
+    }
+    .animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+
+    /* Efecto Cristal */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+    }
+
+    .glass-card-hover {
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .glass-card-hover:hover {
+      transform: translateY(-4px) scale(1.005);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 15px 40px rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+  </style>
+
+  <section class="relative bg-slate-50 pt-32 pb-16 overflow-hidden">
+    <div class="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-200/40 rounded-full blur-[100px] animate-float-slow"></div>
+    <div class="absolute top-[20%] right-[-5%] w-[400px] h-[400px] bg-blue-200/40 rounded-full blur-[80px]"></div>
+
+    <div class="relative z-10 container mx-auto px-6 text-center max-w-4xl">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-white/50 text-slate-500 text-xs font-bold uppercase tracking-wider mb-8 shadow-sm">
+        <span class="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+        Agenda Oficial
+      </div>
+
+      <h1 class="text-5xl md:text-6xl font-bold text-slate-900 font-title mb-6 tracking-tight">
+        Calendario <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Académico</span>
+      </h1>
+      <p class="text-slate-600 text-xl leading-relaxed font-light max-w-2xl mx-auto">
+        Conferencias magistrales, talleres especializados y ceremonias institucionales.
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-24 px-6 bg-slate-50 min-h-[60vh] relative z-10">
+    <div class="container mx-auto max-w-5xl">
+
+      <div class="mb-24">
+        <div class="flex items-center justify-between mb-8 px-2">
+          <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
+            <span class="p-2 bg-blue-100 rounded-xl text-blue-600"><Sparkles className="w-5 h-5" /></span>
+            Próximos Eventos
+          </h2>
+          <span class="text-sm text-slate-400 font-medium bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm">
+                {proximos.length} programados
+            </span>
+        </div>
+
+        {proximos.length > 0 ? (
+            <div class="grid gap-6">
+              {proximos.map((evento, index) => (
+                  <article class="glass-panel glass-card-hover rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start md:items-center group">
+
+                    {/* Columna Fecha (Diseño Calendario iOS) */}
+                    <div class="flex-shrink-0 w-full md:w-auto flex md:flex-col items-center justify-between md:justify-center gap-4 bg-gradient-to-b from-white to-blue-50/50 rounded-3xl p-5 border border-white shadow-inner min-w-[110px] text-center">
+                      <div>
+                    <span class="block text-xs uppercase font-bold text-blue-500 tracking-widest mb-1">
+                        {evento.data.fechaHora.toLocaleDateString('es-PE', { month: 'short' }).replace('.', '')}
+                    </span>
+                        <span class="block text-5xl font-bold text-slate-800 tracking-tighter leading-none">
+                        {evento.data.fechaHora.getDate()}
+                    </span>
+                      </div>
+                      <div class="hidden md:block w-8 h-1 bg-slate-200 rounded-full my-2"></div>
+                      <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100">
+                        <Clock className="w-3 h-3" />
+                        {evento.data.fechaHora.toLocaleTimeString('es-PE', { hour: '2-digit', minute:'2-digit' })}
+                      </div>
+                    </div>
+
+                    {/* Columna Info */}
+                    <div class="flex-grow space-y-3">
+                      <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-[10px] font-extrabold uppercase tracking-widest border border-blue-100/50">
+                        {evento.data.tipo}
+                    </span>
+                        {index === 0 && (
+                            <span class="inline-flex items-center px-2 py-1 rounded-lg bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-wider border border-amber-100">
+                            Destacado
+                        </span>
+                        )}
+                      </div>
+
+                      <h3 class="text-2xl md:text-3xl font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">
+                        {evento.data.nombre}
+                      </h3>
+
+                      <div class="flex items-center gap-2 text-slate-500 text-sm font-medium pt-1">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-500 transition-colors">
+                          <MapPin className="w-4 h-4" />
+                        </div>
+                        {evento.data.lugar}
+                      </div>
+                    </div>
+
+                    {/* Columna Acción */}
+                    <div class="w-full md:w-auto mt-2 md:mt-0">
+                      <a href={`/eventos/${evento.slug}`} class="group/btn relative flex items-center justify-center w-full md:w-auto px-8 py-4 bg-slate-900 text-white font-bold rounded-2xl overflow-hidden hover:scale-105 transition-transform shadow-xl shadow-slate-900/20">
+                     <span class="relative z-10 flex items-center gap-2">
+                        Ver Detalles <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                     </span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                      </a>
+                    </div>
+                  </article>
+              ))}
+            </div>
+        ) : (
+            // ESTADO VACÍO (Estilo Glass)
+          <div class="glass-panel rounded-[2rem] p-12 text-center border-dashed border-2 border-slate-300/50 flex flex-col items-center justify-center">
+              <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                <CalendarDays className="w-10 h-10 text-slate-300" />
+              </div>
+              <h3 class="text-xl font-bold text-slate-700 mb-2">Sin eventos programados</h3>
+              <p class="text-slate-500 max-w-md mx-auto font-light">
+                Actualmente no hay actividades próximas en agenda. Te invitamos a revisar nuestro historial.
+              </p>
+            </div>
+        )}
+      </div>
+
+      {pasados.length > 0 && (
+          <div class="relative">
+            <div class="flex items-center gap-4 mb-8">
+              <div class="h-[1px] flex-grow bg-slate-200"></div>
+              <h2 class="text-lg font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <History className="w-4 h-4" /> Historial
+              </h2>
+              <div class="h-[1px] flex-grow bg-slate-200"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 opacity-80 hover:opacity-100 transition-opacity duration-500">
+              {pasados.map(evento => (
+                  <a href={`/eventos/${evento.slug}`} class="group block bg-white rounded-3xl p-6 border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                      {evento.data.tipo}
+                    </span>
+                      <span class="text-xs font-mono text-slate-400">
+                        {evento.data.fechaHora.getFullYear()}
+                    </span>
+                    </div>
+
+                    <div class="mb-4">
+                      <span class="block text-2xl font-bold text-slate-300 group-hover:text-blue-600 transition-colors mb-1">
+                        {evento.data.fechaHora.getDate()} {evento.data.fechaHora.toLocaleDateString('es-PE', { month: 'short' })}.
+                      </span>
+                      <h4 class="font-bold text-slate-700 line-clamp-2 leading-tight">
+                        {evento.data.nombre}
+                      </h4>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-50 mt-4">
+                    <span class="text-xs text-slate-400 flex items-center gap-1 truncate max-w-[70%]">
+                        <MapPin className="w-3 h-3" /> {evento.data.lugar}
+                    </span>
+                      <span class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-all transform group-hover:-rotate-45">
+                        <ArrowRight className="w-4 h-4" />
+                    </span>
+                    </div>
+                  </a>
+              ))}
+            </div>
+          </div>
+      )}
+
+    </div>
+  </section>
+</Layout>

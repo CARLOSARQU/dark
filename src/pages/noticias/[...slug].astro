@@ -1,0 +1,182 @@
+---
+// Archivo: src/pages/noticias/[...slug].astro
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import {
+    ChevronLeft,
+    Calendar,
+    Share2,
+    Clock,
+    User,
+    Bookmark
+} from 'lucide-react';
+
+export async function getStaticPaths() {
+    const blogEntries = await getCollection('noticias');
+    return blogEntries.map(entry => ({
+        params: { slug: entry.slug }, props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Formateo de fecha
+const fechaFormateada = entry.data.fecha.toLocaleDateString('es-PE', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+});
+---
+
+<Layout title={entry.data.titulo}>
+
+    <div class="fixed top-0 left-0 h-1 bg-blue-600 z-50 w-full origin-left scale-x-0" id="scroll-progress"></div>
+
+    <style>
+        /* Animación de la barra de progreso */
+        #scroll-progress {
+            animation: scroll-progress-anim linear;
+            animation-timeline: scroll();
+        }
+        @keyframes scroll-progress-anim {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        /* Efectos de fondo */
+        @keyframes float-blob {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .blob-bg { animation: float-blob 10s infinite ease-in-out alternate; }
+
+        /* Estilos personalizados para el contenido Markdown */
+        .prose-custom {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #334155;
+        }
+        .prose-custom p { margin-bottom: 1.5em; }
+        .prose-custom strong { color: #1e293b; font-weight: 700; }
+        .prose-custom h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 2.5em;
+            margin-bottom: 1em;
+            letter-spacing: -0.025em;
+        }
+        .prose-custom h3 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 2em; }
+        .prose-custom ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.5em; }
+        .prose-custom li { margin-bottom: 0.5em; marker: text-blue-500; }
+        .prose-custom blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1.5rem;
+            font-style: italic;
+            color: #475569;
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0 1rem 1rem 0;
+            margin: 2rem 0;
+        }
+        .prose-custom img {
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+        }
+    </style>
+
+    <section class="bg-slate-50 min-h-screen pb-24 pt-32 relative overflow-hidden">
+
+        <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            <div class="absolute top-0 right-[-10%] w-[800px] h-[800px] bg-blue-100/50 rounded-full blur-[120px] blob-bg"></div>
+            <div class="absolute bottom-0 left-[-10%] w-[600px] h-[600px] bg-indigo-100/40 rounded-full blur-[100px] blob-bg" style="animation-delay: -5s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 mb-12">
+            <a href="/noticias" class="group inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold text-sm bg-white/60 hover:bg-white px-5 py-2.5 rounded-full backdrop-blur-md border border-slate-200 shadow-sm transition-all duration-300">
+                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                Volver
+            </a>
+        </div>
+
+        <article class="container mx-auto px-6 max-w-5xl relative z-10">
+
+            <header class="text-center max-w-4xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-widest rounded-full mb-6 border border-blue-100">
+                    Noticia Institucional
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 font-title leading-[1.1] tracking-tight mb-8 drop-shadow-sm">
+                    {entry.data.titulo}
+                </h1>
+
+                <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500 font-medium">
+                    <div class="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-200/50">
+                        <Calendar className="w-4 h-4 text-blue-500" />
+                        {fechaFormateada}
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-200/50">
+                        <Clock className="w-4 h-4 text-blue-500" />
+                        5 min de lectura
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-200/50">
+                        <User className="w-4 h-4 text-blue-500" />
+                        EPIS Prensa
+                    </div>
+                </div>
+            </header>
+
+            <div class="mb-16 relative group">
+                <div class="absolute inset-0 bg-blue-500 blur-[60px] opacity-20 group-hover:opacity-30 transition duration-700 rounded-full"></div>
+                {entry.data.portada ? (
+                        <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-900/10 border-4 border-white">
+                            <img
+                                    src={entry.data.portada}
+                                    alt={entry.data.titulo}
+                                    class="w-full h-auto object-cover max-h-[600px] transform group-hover:scale-105 transition duration-[1.5s]"
+                            />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                        </div>
+                ) : (
+                        <div class="w-full h-96 bg-slate-200 rounded-[2.5rem] flex items-center justify-center text-slate-400 border-4 border-white shadow-xl">
+                            <span class="font-medium">Sin imagen de portada</span>
+                        </div>
+                )}
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-16 shadow-xl shadow-slate-200/50 border border-white max-w-3xl mx-auto">
+
+                <div class="prose-custom font-sans">
+                    <Content />
+                </div>
+
+                <div class="mt-16 pt-10 border-t border-slate-200">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Etiquetas</p>
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer">Académico</span>
+                                <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer">Ingeniería</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button class="p-3 rounded-full bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white transition shadow-sm hover:shadow-lg hover:-translate-y-1" title="Guardar">
+                                <Bookmark className="w-5 h-5" />
+                            </button>
+                            <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-blue-600 transition shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1">
+                                <Share2 className="w-4 h-4" />
+                                Compartir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </article>
+    </section>
+</Layout>

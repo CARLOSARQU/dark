@@ -1,46 +1,238 @@
-# Astro Starter Kit: Basics
+# 🌐 Portal Web — EP Ingeniería de Sistemas
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+> **Documentación Técnica Oficial**  
+> Modernización del portal institucional de la Escuela Profesional de Ingeniería de Sistemas
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## 📌 Visión General del Proyecto
 
-Inside of your Astro project, you'll see the following folders and files:
+Este proyecto consiste en la **modernización y rediseño del portal web institucional** de la EP de Ingeniería de Sistemas.  
+El objetivo es ofrecer una plataforma:
 
-```text
+- ⚡ **Rápida**
+- ♿ **Accesible**
+- 🎨 **Visualmente moderna**
+- 🧩 **Fácil de administrar**
+
+Todo ello resolviendo los problemas de **obsolescencia tecnológica** y **mala experiencia de usuario (UX)** del sitio anterior.
+
+---
+
+## 🎯 Objetivos Clave
+
+- **Rendimiento**  
+  Optimización SEO y métricas **Core Web Vitals** (carga casi instantánea).
+
+- **Gestión de Contenido**  
+  CMS *Headless* con **Keystatic**, pensado para usuarios no técnicos.
+
+- **Búsqueda Avanzada**  
+  Búsqueda completa e instantánea **sin servidores externos**.
+
+- **Escalabilidad**  
+  Arquitectura basada en **componentes reutilizables**.
+
+- **Experiencia de Usuario (UX)**  
+  Navegación fluida con **View Transitions** y enfoque **Mobile First**.
+
+---
+
+## 🧰 Stack Tecnológico
+
+Arquitectura basada en estándares modernos **Jamstack**:
+
+| Categoría | Tecnología |
+|---------|-----------|
+| ⚙️ Framework | **Astro v5** (Islands Architecture) |
+| 🎨 Estilos | **Tailwind CSS** |
+| 🧠 Lenguaje | **TypeScript** |
+| ⚛️ UI Interactiva | **React** (Islas específicas) |
+| 🔍 Búsqueda | **Pagefind** |
+| 🧩 Iconos | **Lucide React** |
+| 📝 CMS | **Keystatic** (Git-based) |
+| ✅ Validación | **Zod** |
+
+---
+
+## 🏗️ Arquitectura del Proyecto
+
+Estructura estándar de Astro optimizada para mantenibilidad:
+
+```txt
 /
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+├── public/              # Archivos estáticos
+├── src/
+│   ├── components/      # Componentes reutilizables
+│   ├── content/         # Base de datos basada en archivos
+│   │   ├── config.ts
+│   │   ├── noticias/
+│   │   ├── eventos/
+│   │   └── docentes/
+│   ├── layouts/         # Layouts globales
+│   ├── pages/           # Rutas del sitio
+│   ├── styles/          # Estilos globales
+│   └── consts.ts        # Constantes globales
+├── keystatic.config.ts  # Configuración CMS
+└── astro.config.mjs     # Configuración Astro
+````
+
+---
+
+## 🗂️ Modelo de Datos (Content Collections)
+
+El proyecto **no usa base de datos SQL**.
+Los datos viven en el repositorio → **versionados, seguros y auditables**.
+
+### 📰 Noticias (`type: content`)
+
+* `titulo`
+* `fecha`
+* `extracto`
+* `portada`
+* `contenido` (Markdown)
+
+### 📅 Eventos (`type: content`)
+
+* `nombre`
+* `fechaHora`
+* `lugar`
+* `tipo` (Enum)
+* `afiche`
+
+🧠 **Lógica automática** para separar eventos pasados y futuros usando `new Date()`.
+
+### 👨‍🏫 Docentes (`type: data`)
+
+* `nombre`
+* `grado` (Ing, Mg, Dr)
+* `cargo`
+* `foto`
+* `linkedin`
+
+---
+
+## ⚙️ Características de Ingeniería
+
+### 🔁 Navegación SPA
+
+Uso de `ClientRouter` de Astro:
+
+* Navegación sin recargas completas
+* Intercambio dinámico del `<body>`
+
+✨ **Resultado:** experiencia tipo aplicación nativa.
+
+---
+
+### 🧭 Navbar Reactivo y Optimizado
+
+Implementación avanzada en `Navbar.astro`:
+
+* Estado controlado con atributos `data-*`
+* Menos JS, más rendimiento
+* Re-inicialización correcta tras transiciones con:
+
+```js
+document.addEventListener('astro:page-load', () => {
+  // lógica del navbar
+});
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+---
 
-## 🧞 Commands
+### 🔍 Buscador Estático (Pagefind)
 
-All commands are run from the root of the project, from a terminal:
+* Indexación en **build time**
+* Ejecución **100% client-side**
+* Sin APIs, sin backend
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+🎹 Atajos:
 
-## 👀 Want to learn more?
+* `ESC` → cerrar
+* `CTRL / CMD + K` → abrir
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+---
+
+### 🧩 Sistema de Iconos
+
+* **Lucide React**
+* SVG renderizados en servidor (SSR)
+* Alta nitidez y bajo peso
+
+---
+
+### 🧱 Rutas Dinámicas y Generación Estática
+
+* Uso de `[...slug].astro`
+* HTML generado en build
+* ❌ Sin latencia de base de datos
+
+---
+
+## 🧑‍💻 Guía de Administración (CMS)
+
+Panel administrativo disponible en:
+
+```txt
+/keystatic
+```
+
+### 👥 Roles
+
+* **Desarrollador:** Código y arquitectura
+* **Editor:** Gestión de contenido visual
+
+### 🔄 Flujo del Editor
+
+1. Accede al panel Keystatic
+2. Selecciona una colección
+3. Crea o edita contenido
+4. El sistema guarda archivos `.md` / `.yaml` automáticamente
+
+---
+
+## 🚀 Instalación y Despliegue
+
+### Requisitos
+
+* Node.js **v18+**
+* npm / pnpm / yarn
+
+### Instalación
+
+```bash
+npm install
+```
+
+### Desarrollo
+
+```bash
+npm run dev
+```
+
+📍 [http://localhost:4321](http://localhost:4321)
+
+---
+
+### 🔎 Nota sobre el Buscador
+
+Pagefind solo funciona tras generar el sitio:
+
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+## ✅ Conclusiones
+
+Esta arquitectura:
+
+* 🧠 Sigue principios **SOLID**
+* ⚡ Ofrece **UX superior**
+* 🔍 Incorpora búsqueda instantánea
+* 🛠️ Garantiza **mantenibilidad a largo plazo**
+
+🎓 El portal posiciona a la EP de Ingeniería de Sistemas como **referente tecnológico institucional**.

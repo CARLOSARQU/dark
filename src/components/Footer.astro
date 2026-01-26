@@ -1,0 +1,133 @@
+---
+import { NAV_LINKS } from '../consts';
+import {
+  Facebook,
+  Linkedin,
+  Twitter,
+  Instagram,
+  MapPin,
+  Mail,
+  Phone,
+  ArrowRight,
+  ExternalLink
+} from 'lucide-react';
+
+const currentYear = new Date().getFullYear();
+
+// Redes sociales configurables
+const SOCIALS = [
+  { icon: Facebook, href: "#", label: "Facebook" },
+  { icon: Linkedin, href: "#", label: "LinkedIn" },
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+];
+---
+
+<footer class="relative bg-[#0B1120] text-slate-300 overflow-hidden border-t border-white/5">
+
+  <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute inset-0 bg-[url('/img/grid-pattern.svg')] opacity-[0.03] pointer-events-none"></div>
+
+  <div class="container mx-auto px-6 py-16 relative z-10">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
+
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-900/20">
+            <span class="font-bold text-lg">EP</span>
+          </div>
+          <div>
+            <span class="block text-white font-bold text-lg tracking-tight leading-none">Ingeniería de</span>
+            <span class="block text-blue-500 font-bold text-lg tracking-tight leading-none">Sistemas</span>
+          </div>
+        </div>
+
+        <p class="text-slate-400 text-sm leading-relaxed max-w-sm font-light">
+          Liderando la innovación tecnológica en el sur del país. Formamos ingenieros con visión global, ética y capacidad transformadora.
+        </p>
+
+        <div class="flex gap-3">
+          {SOCIALS.map(social => (
+              <a
+                  href={social.href}
+                  aria-label={social.label}
+                  class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:-translate-y-1 transition-all duration-300"
+              >
+                <social.icon className="w-4 h-4" />
+              </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 lg:col-start-6">
+        <h4 class="font-bold text-white mb-6 text-sm uppercase tracking-widest flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Explorar
+        </h4>
+        <ul class="space-y-3">
+          {NAV_LINKS.filter(link => !link.isButton).map(link => (
+              <li>
+                <a href={link.href} class="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-2 group">
+                  <span class="w-1 h-1 rounded-full bg-slate-600 group-hover:bg-blue-400 transition-colors"></span>
+                  {link.label}
+                </a>
+              </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="lg:col-span-2">
+        <h4 class="font-bold text-white mb-6 text-sm uppercase tracking-widest flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Links
+        </h4>
+        <ul class="space-y-3 text-sm">
+          <li><a href="#" class="hover:text-white transition flex items-center gap-1">Aula Virtual <ExternalLink className="w-3 h-3 opacity-50"/></a></li>
+          <li><a href="#" class="hover:text-white transition flex items-center gap-1">Plataforma Pilar <ExternalLink className="w-3 h-3 opacity-50"/></a></li>
+          <li><a href="#" class="hover:text-white transition flex items-center gap-1">Biblioteca <ExternalLink className="w-3 h-3 opacity-50"/></a></li>
+          <li><a href="#" class="hover:text-white transition flex items-center gap-1">Mesa de Partes <ExternalLink className="w-3 h-3 opacity-50"/></a></li>
+        </ul>
+      </div>
+
+      <div class="lg:col-span-4">
+        <h4 class="font-bold text-white mb-6 text-sm uppercase tracking-widest flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Contacto
+        </h4>
+        <ul class="space-y-4 text-sm">
+          <li class="flex gap-4 items-start group">
+            <div class="mt-1 p-2 rounded-lg bg-white/5 text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <span class="text-slate-400 group-hover:text-slate-300 transition">
+                Ciudad Universitaria<br/>
+                Av. Floral 1153, Puno - Perú
+            </span>
+          </li>
+          <li class="flex gap-4 items-center group">
+            <div class="p-2 rounded-lg bg-white/5 text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <Mail className="w-4 h-4" />
+            </div>
+            <a href="mailto:epis@unap.edu.pe" class="text-slate-400 hover:text-white transition border-b border-transparent hover:border-blue-400">
+              epis@unap.edu.pe
+            </a>
+          </li>
+          <li class="flex gap-4 items-center group">
+            <div class="p-2 rounded-lg bg-white/5 text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <Phone className="w-4 h-4" />
+            </div>
+            <span class="text-slate-400 group-hover:text-slate-300 transition">+51 (051) 363543</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
+      <p>&copy; {currentYear} EP Ingeniería de Sistemas UNAP. Todos los derechos reservados.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-blue-400 transition">Política de Privacidad</a>
+        <a href="#" class="hover:text-blue-400 transition">Términos de Uso</a>
+        <a href="#" class="hover:text-blue-400 transition">Libro de Reclamaciones</a>
+      </div>
+    </div>
+  </div>
+</footer>

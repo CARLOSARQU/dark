@@ -1,0 +1,345 @@
+---
+// Archivo: src/components/Navbar.astro
+import { NAV_LINKS } from '../consts';
+import { Search } from 'lucide-react';
+
+const currentPath = Astro.url.pathname;
+const logoSrc = "/logo.webp";
+---
+
+<nav
+    id="main-nav"
+    data-scroll="false"
+    data-menu-open="false"
+    class="fixed top-0 w-full z-50 transition-all duration-500 border-b border-transparent
+    data-[scroll=true]:bg-white/80 data-[scroll=true]:backdrop-blur-xl data-[scroll=true]:border-slate-200/50 data-[scroll=true]:shadow-sm
+    data-[menu-open=true]:bg-white"
+>
+  <div
+      id="nav-container"
+      class="container mx-auto px-6 md:px-12 h-24 flex justify-between items-center transition-all duration-500 group-[.scrolled]:h-20"
+  >
+
+    <a href="/" class="flex items-center gap-3 sm:gap-4 group relative z-50 focus:outline-none rounded-lg">
+      <img
+          id="nav-logo"
+          src={logoSrc}
+          alt="Logo EPIS"
+          class="h-14 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+      />
+
+      <div class="flex flex-col transition-all duration-300 origin-left">
+        <span class="text-unap-blue font-bold text-sm sm:text-base md:text-lg leading-tight tracking-wide font-title text-slate-900">
+          EP. INGENIERÍA DE SISTEMAS
+        </span>
+        <span class="text-[10px] sm:text-xs text-slate-500 font-medium tracking-[0.2em] uppercase">
+          Excelencia Académica
+        </span>
+      </div>
+    </a>
+
+    <div class="hidden md:flex items-center gap-8">
+      <ul class="flex items-center gap-8">
+        {NAV_LINKS.filter(link => link.label !== 'Contacto').map((link) => {
+          const isActive = currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
+          return (
+              <li>
+                {link.isButton ? (
+                    <a href={link.href} class="px-6 py-2.5 bg-unap-blue text-white rounded-full hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20 hover:-translate-y-0.5 font-bold text-xs tracking-wide">
+                      {link.label}
+                    </a>
+                ) : (
+                    <a href={link.href} class:list={[
+                      "text-sm font-bold uppercase tracking-wider transition-colors relative group/link py-2",
+                      isActive ? "text-unap-blue" : "text-slate-600 hover:text-unap-blue"
+                    ]}>
+                      {link.label}
+                      <span class:list={[
+                        "absolute bottom-0 left-0 h-0.5 bg-unap-blue transition-all duration-300 rounded-full",
+                        isActive ? "w-full" : "w-0 group-hover/link:w-full"
+                      ]}></span>
+                    </a>
+                )}
+              </li>
+          );
+        })}
+      </ul>
+
+      <div class="h-6 w-px bg-slate-200"></div>
+
+      <button
+          id="search-trigger-desktop"
+          class="flex items-center gap-2 text-slate-500 hover:text-unap-blue transition-colors group bg-slate-50 hover:bg-blue-50 px-3 py-2 rounded-lg border border-slate-100 hover:border-blue-100"
+          aria-label="Abrir buscador"
+      >
+        <Search className="w-4 h-4" /> <span class="text-xs font-bold hidden lg:inline-block">Buscar</span>
+        <kbd class="hidden lg:inline-flex items-center gap-0.5 h-5 px-1.5 text-[10px] font-mono font-medium text-slate-400 bg-white border border-slate-200 rounded ml-2">
+          <span class="text-xs">⌘</span>K
+        </kbd>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-2 md:hidden z-50">
+      <button id="search-trigger-mobile" class="p-2.5 text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors">
+        <Search className="w-5 h-5" />
+      </button>
+
+      <button
+          id="menu-toggle"
+          class="text-slate-800 p-2 focus:outline-none hover:bg-slate-50 rounded-lg transition-colors"
+          aria-label="Abrir menú"
+      >
+        <div class="w-6 flex flex-col items-end gap-1.5">
+          <span id="line-1" class="w-full h-0.5 bg-current transition-all duration-300"></span>
+          <span id="line-2" class="w-3/4 h-0.5 bg-current transition-all duration-300"></span>
+          <span id="line-3" class="w-full h-0.5 bg-current transition-all duration-300"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div
+      id="mobile-menu"
+      class="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-all duration-500 data-[open=true]:opacity-100 data-[open=true]:pointer-events-auto"
+  >
+    <nav class="flex flex-col items-center gap-6 w-full px-8">
+      {NAV_LINKS.filter(link => link.label !== 'Contacto').map((link, index) => (
+          <a
+              href={link.href}
+              class="text-xl font-bold uppercase tracking-wider text-slate-800 hover:text-unap-blue transition-all transform translate-y-4 opacity-0"
+              style={`transition-delay: ${index * 100}ms`}
+              data-mobile-link
+          >
+            {link.label}
+          </a>
+      ))}
+      <a href="/contacto" class="mt-6 px-8 py-4 bg-unap-blue text-white rounded-full font-bold shadow-xl shadow-blue-900/20 transform translate-y-4 opacity-0 transition-all" style="transition-delay: 400ms" data-mobile-link>
+        Contáctanos
+      </a>
+    </nav>
+  </div>
+</nav>
+
+<dialog
+    id="search-modal"
+    class="fixed inset-0 z-[100] w-full h-full bg-slate-900/40 backdrop-blur-sm p-4 flex items-start justify-center pt-[15vh] opacity-0 pointer-events-none transition-opacity duration-200 open:opacity-100 open:pointer-events-auto border-none m-0 max-w-none"
+>
+  <div
+      class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden ring-1 ring-black/5 transform scale-95 transition-all duration-200"
+      id="search-panel"
+  >
+    <div class="relative flex items-center px-4 py-3 border-b border-slate-100">
+      <Search className="w-5 h-5 text-slate-400" />
+      <input
+          type="text"
+          id="search-input"
+          class="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-700 placeholder:text-slate-400 text-lg px-4 h-10 font-medium"
+          placeholder="Buscar..."
+          autocomplete="off"
+      />
+      <button id="close-search" class="p-1 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-500 font-bold px-2 transition-colors">ESC</button>
+    </div>
+
+    <div class="max-h-[60vh] overflow-y-auto bg-slate-50/50" id="search-body">
+
+      <div id="search-initial" class="py-12 text-center text-slate-400">
+        <Search className="w-10 h-10 mx-auto mb-3 text-slate-300" />
+        <p class="text-sm font-medium">Escribe para buscar en la web.</p>
+      </div>
+
+      <div id="search-loading" class="hidden py-12 text-center">
+        <div class="inline-block w-8 h-8 border-4 border-slate-200 border-t-unap-blue rounded-full animate-spin"></div>
+      </div>
+
+      <ul id="search-results" class="hidden divide-y divide-slate-100 bg-white"></ul>
+
+      <div id="search-empty" class="hidden py-12 text-center text-slate-500">
+        <p class="font-medium">No se encontraron resultados.</p>
+      </div>
+
+      <div id="search-error" class="hidden py-8 px-6 text-center">
+        <div class="bg-amber-50 text-amber-800 p-4 rounded-xl border border-amber-200 text-sm flex items-center gap-3 justify-center">
+          <span class="text-2xl">⚠️</span>
+          <div class="text-left">
+            <p class="font-bold">Buscador no disponible</p>
+            <p class="text-xs opacity-80">Pagefind solo funciona tras ejecutar 'npm run build'.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</dialog>
+
+<style>
+  nav[data-menu-open="true"] #line-1 { transform: rotate(45deg) translate(5px, 6px); }
+  nav[data-menu-open="true"] #line-2 { opacity: 0; }
+  nav[data-menu-open="true"] #line-3 { transform: rotate(-45deg) translate(5px, -6px); }
+
+  nav[data-menu-open="true"] [data-mobile-link] {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  dialog[open] #search-panel { transform: scale(100%); }
+</style>
+
+<script is:inline>
+  // Script arreglado: JavaScript Puro (Sin tipos de TS para que funcione en el navegador)
+  document.addEventListener('astro:page-load', () => {
+
+    // 1. NAVBAR SCROLL
+    const nav = document.getElementById('main-nav');
+    const navContainer = document.getElementById('nav-container');
+
+    const onScroll = () => {
+      if(window.scrollY > 20) {
+        nav?.setAttribute('data-scroll', 'true');
+        navContainer?.classList.remove('h-24');
+        navContainer?.classList.add('h-20');
+      } else {
+        nav?.setAttribute('data-scroll', 'false');
+        navContainer?.classList.remove('h-20');
+        navContainer?.classList.add('h-24');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // 2. MENÚ MÓVIL
+    const toggleBtn = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileLinks = document.querySelectorAll('[data-mobile-link]');
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const isOpen = nav?.getAttribute('data-menu-open') === 'true';
+        nav?.setAttribute('data-menu-open', (!isOpen).toString());
+        mobileMenu?.setAttribute('data-open', (!isOpen).toString());
+        document.body.style.overflow = !isOpen ? 'hidden' : '';
+      });
+    }
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        nav?.setAttribute('data-menu-open', 'false');
+        mobileMenu?.setAttribute('data-open', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // 3. BÚSQUEDA ROBUSTA
+    const searchModal = document.getElementById('search-modal');
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+
+    // Elementos de estado UI
+    const elInitial = document.getElementById('search-initial');
+    const elLoading = document.getElementById('search-loading');
+    const elEmpty = document.getElementById('search-empty');
+    const elError = document.getElementById('search-error');
+
+    let pagefind = null;
+
+    async function loadPagefind() {
+      if(pagefind) return true;
+      try {
+        // Import dinámico seguro
+        pagefind = await import('/pagefind/pagefind.js');
+        await pagefind.init();
+        return true;
+      } catch (e) {
+        console.log("Info: Pagefind no disponible en dev.");
+        return false;
+      }
+    }
+
+    const handleSearch = async (query) => {
+      // Ocultar todo
+      if(elInitial) elInitial.classList.add('hidden');
+      if(elLoading) elLoading.classList.add('hidden');
+      if(searchResults) searchResults.classList.add('hidden');
+      if(elEmpty) elEmpty.classList.add('hidden');
+      if(elError) elError.classList.add('hidden');
+
+      if(!query) {
+        if(elInitial) elInitial.classList.remove('hidden');
+        return;
+      }
+
+      if(elLoading) elLoading.classList.remove('hidden');
+
+      const success = await loadPagefind();
+
+      if(!success) {
+        if(elLoading) elLoading.classList.add('hidden');
+        if(elError) elError.classList.remove('hidden');
+        return;
+      }
+
+      const search = await pagefind.search(query);
+      const fiveResults = await Promise.all(search.results.slice(0, 5).map(r => r.data()));
+
+      if(elLoading) elLoading.classList.add('hidden');
+
+      if(fiveResults.length === 0) {
+        if(elEmpty) elEmpty.classList.remove('hidden');
+      } else {
+        if(searchResults) {
+          searchResults.innerHTML = fiveResults.map(item => `
+            <li>
+                <a href="${item.url}" class="block p-4 hover:bg-slate-50 transition group">
+                    <div class="font-bold text-slate-800 group-hover:text-unap-blue line-clamp-1">${item.meta.title}</div>
+                    <div class="text-sm text-slate-500 line-clamp-1 mt-1">${item.excerpt.replace(/<[^>]*>?/gm, '')}</div>
+                </a>
+            </li>
+          `).join('');
+          searchResults.classList.remove('hidden');
+        }
+      }
+    };
+
+    let timeout;
+    if(searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          handleSearch(e.target.value);
+        }, 300);
+      });
+    }
+
+    const openModal = () => {
+      if(searchModal) {
+        searchModal.showModal();
+        document.body.style.overflow = 'hidden';
+        if(searchInput) searchInput.focus();
+        loadPagefind();
+      }
+    };
+
+    const closeModal = () => {
+      if(searchModal) {
+        searchModal.close();
+        document.body.style.overflow = '';
+      }
+    };
+
+    document.getElementById('search-trigger-desktop')?.addEventListener('click', openModal);
+    document.getElementById('search-trigger-mobile')?.addEventListener('click', openModal);
+    document.getElementById('close-search')?.addEventListener('click', closeModal);
+
+    if(searchModal) {
+      searchModal.addEventListener('click', (e) => {
+        if(e.target === searchModal) closeModal();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openModal();
+      }
+    });
+  });
+</script>

@@ -1,11 +1,321 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import {
+  GraduationCap,
+  BarChart3,
+  Library,
+  ArrowRight,
+  Calendar,
+  MapPin
+} from 'lucide-react';
+
+// 1. OBTENER NOTICIAS
+const allNoticias = await getCollection('noticias');
+const ultimasNoticias = allNoticias
+    .sort((a, b) => b.data.fecha.valueOf() - a.data.fecha.valueOf())
+    .slice(0, 3);
+
+// 2. OBTENER EVENTOS
+const allEventos = await getCollection('eventos');
+const now = new Date();
+const proximosEventos = allEventos
+    .filter(e => e.data.fechaHora >= now)
+    .sort((a, b) => a.data.fechaHora.valueOf() - b.data.fechaHora.valueOf())
+    .slice(0, 3);
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Inicio | EP Ingeniería de Sistemas">
+
+  <style>
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    .animate-float-delayed {
+      animation: float 7s ease-in-out infinite 1s;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .dark-glass-card {
+      background: rgba(30, 41, 59, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+
+  <section class="relative min-h-[90vh] flex items-center justify-center pt-32 pb-20 overflow-hidden bg-slate-50">
+
+    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-400/30 rounded-full blur-[100px] animate-float"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-400/20 rounded-full blur-[120px] animate-float-delayed"></div>
+    <div class="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03]"></div> <div class="relative z-10 container mx-auto px-6 text-center">
+
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-8 shadow-sm backdrop-blur-md hover:scale-105 transition-transform cursor-default">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </span>
+      Admisión 2026 Abierta
+    </div>
+
+    <h1 class="text-5xl md:text-8xl font-bold text-slate-900 mb-8 font-title tracking-tighter leading-[1.1] max-w-6xl mx-auto">
+      Ingeniería de <br class="hidden md:block"/>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 drop-shadow-sm">Sistemas</span>
+    </h1>
+
+    <p class="text-lg md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+      "Desafiando al tiempo y a los paradigmas". Formamos líderes de la transformación digital con una visión ética, innovadora y humana.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-5 justify-center items-center">
+      <a href="/malla-curricular" class="group relative px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl overflow-hidden shadow-lg shadow-blue-500/30 transition-all hover:scale-105 hover:shadow-blue-500/50">
+        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+        <span class="relative flex items-center gap-2">Ver Malla Curricular <ArrowRight className="w-4 h-4" /></span>
+      </a>
+
+      <a href="/contacto" class="px-8 py-4 bg-white/60 backdrop-blur-md text-slate-700 font-bold rounded-2xl border border-white/50 hover:bg-white hover:text-blue-700 transition shadow-sm hover:shadow-md">
+        Contactar Escuela
+      </a>
+    </div>
+  </div>
+  </section>
+
+  <section class="py-10 -mt-20 relative z-20">
+    <div class="container mx-auto px-6 md:px-12 lg:px-20">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+        <a href="https://campus.unap.edu.pe" target="_blank" class="glass-card group p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(59,130,246,0.15)] transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center gap-4">
+            <div class="p-3.5 bg-blue-100/50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+              <GraduationCap className="w-7 h-7" />
+            </div>
+            <div>
+              <span class="block font-bold text-slate-800 text-lg group-hover:text-blue-600 transition">Aula Virtual</span>
+              <span class="text-xs text-slate-500 font-medium">Acceso a cursos</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://pilar.unap.edu.pe" target="_blank" class="glass-card group p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center gap-4">
+            <div class="p-3.5 bg-emerald-100/50 text-emerald-600 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+              <BarChart3 className="w-7 h-7" />
+            </div>
+            <div>
+              <span class="block font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition">Plataforma Pilar</span>
+              <span class="text-xs text-slate-500 font-medium">Notas y Matrícula</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://biblioteca.unap.edu.pe" target="_blank" class="glass-card group p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(168,85,247,0.15)] transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center gap-4">
+            <div class="p-3.5 bg-purple-100/50 text-purple-600 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
+              <Library className="w-7 h-7" />
+            </div>
+            <div>
+              <span class="block font-bold text-slate-800 text-lg group-hover:text-purple-600 transition">Biblioteca</span>
+              <span class="text-xs text-slate-500 font-medium">Repositorio Digital</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24 px-6 bg-white relative">
+    <div class="container mx-auto max-w-7xl">
+
+      <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+        <div>
+          <h2 class="text-4xl md:text-5xl font-bold text-slate-900 font-title tracking-tight">
+            Actualidad <span class="text-blue-600">EPIS</span>
+          </h2>
+        </div>
+        <a href="/noticias" class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-50 text-slate-600 font-bold hover:bg-blue-50 hover:text-blue-600 transition">
+          Ver archivo
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </a>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8">
+
+        <div class="lg:col-span-8 grid md:grid-cols-2 gap-6">
+          {ultimasNoticias.map((noticia, index) => (
+              <article class={`group relative bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 hover:-translate-y-1 flex flex-col ${index === 0 ? 'md:col-span-2 md:flex-row md:h-[350px]' : 'h-[400px]'}`}>
+
+                <div class={`relative overflow-hidden ${index === 0 ? 'md:w-3/5 h-64 md:h-full' : 'h-1/2'}`}>
+                  {noticia.data.portada ? (
+                      <img src={noticia.data.portada} alt={noticia.data.titulo} class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                  ) : (
+                      <div class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">Sin foto</div>
+                  )}
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-60 group-hover:opacity-40 transition"></div>
+
+                  <div class="absolute top-4 left-4">
+                    <span class="px-3 py-1 bg-white/90 backdrop-blur text-slate-800 text-xs font-bold rounded-full shadow-sm">
+                        {noticia.data.fecha.toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div class={`p-8 flex flex-col justify-center relative ${index === 0 ? 'md:w-2/5' : 'h-1/2'}`}>
+                  <h3 class={`font-bold text-slate-800 mb-3 group-hover:text-blue-600 transition leading-tight ${index === 0 ? 'text-2xl' : 'text-xl'}`}>
+                    {noticia.data.titulo}
+                  </h3>
+                  <p class="text-slate-500 text-sm line-clamp-3 mb-6 leading-relaxed">
+                    {noticia.data.extracto}
+                  </p>
+                  <a href={`/noticias/${noticia.slug}`} class="mt-auto inline-flex items-center text-blue-600 text-sm font-bold group-hover:translate-x-1 transition-transform">
+                    Leer más <ArrowRight className="w-3 h-3 ml-1" />
+                  </a>
+                </div>
+              </article>
+          ))}
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100 h-full">
+            <h3 class="font-bold text-slate-800 mb-8 flex items-center gap-3 text-xl">
+              <span class="p-2 bg-white rounded-xl shadow-sm"><Calendar className="w-5 h-5 text-blue-600"/></span>
+              Próximos Eventos
+            </h3>
+
+            <div class="space-y-4 relative">
+              <div class="absolute left-[27px] top-4 bottom-4 w-[2px] bg-slate-200"></div>
+
+              {proximosEventos.length > 0 ? proximosEventos.map(evento => (
+                  <a href={`/eventos/${evento.slug}`} class="relative block bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-200 transition-all duration-300 group ml-2">
+                    <div class="flex gap-4 items-start">
+                      <div class="flex flex-col items-center justify-center min-w-[55px] bg-blue-50 rounded-xl py-2 group-hover:bg-blue-600 transition-colors duration-300">
+                        <span class="text-lg font-bold text-blue-700 group-hover:text-white leading-none">{evento.data.fechaHora.getDate()}</span>
+                        <span class="text-[10px] uppercase font-bold text-blue-400 group-hover:text-blue-200 mt-1">
+                          {evento.data.fechaHora.toLocaleDateString('es-PE', { month: 'short' }).replace('.', '')}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 class="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition line-clamp-2 leading-snug mb-2">
+                          {evento.data.nombre}
+                        </h4>
+                        <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                          <MapPin className="w-3 h-3" />
+                          {evento.data.lugar}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+              )) : (
+                  <p class="text-center text-slate-400 py-4">No hay eventos próximos</p>
+              )}
+            </div>
+
+            <a href="/eventos" class="block w-full py-4 text-center text-sm font-bold text-slate-600 hover:text-blue-600 transition mt-8 border-t border-slate-200">
+              Ver calendario completo
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24 bg-[#0B1120] text-white relative overflow-hidden">
+    <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+      <div class="text-center mb-16 max-w-3xl mx-auto">
+        <h2 class="text-4xl md:text-6xl font-bold font-title mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">
+          Nuestra Identidad
+        </h2>
+        <p class="text-slate-400 text-lg leading-relaxed font-light">
+          Excelencia académica e innovación tecnológica en el corazón del sur del Perú.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+
+        <div class="md:col-span-2 dark-glass-card rounded-[2rem] p-10 relative overflow-hidden group hover:bg-slate-800/50 transition duration-500">
+          <div class="absolute top-0 right-0 p-8 opacity-5 text-9xl group-hover:opacity-10 transition duration-500 select-none grayscale">🏛️</div>
+          <div class="relative z-10 flex flex-col justify-between h-full">
+            <div>
+              <h3 class="text-2xl font-bold mb-4 text-white">Mensaje del Director</h3>
+              <p class="text-slate-300 mb-8 text-lg leading-relaxed font-light">
+                "Nuestro compromiso es formar profesionales que no solo dominen la tecnología, sino que la utilicen para resolver los problemas complejos de nuestra sociedad con una visión humanista."
+              </p>
+            </div>
+            <div class="flex items-center gap-5 mt-auto">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 p-[2px]">
+                <div class="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                  <img src="/img/director-placeholder.jpg" alt="Director" class="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div>
+                <p class="font-bold text-white text-lg">Dr. Nombre del Director</p>
+                <p class="text-xs text-blue-400 uppercase font-bold tracking-wider">Director de Escuela</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative rounded-[2rem] p-8 text-center flex flex-col justify-center items-center overflow-hidden group">
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-900 transition-transform duration-500 group-hover:scale-110"></div>
+          <div class="relative z-10">
+            <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/20 shadow-inner mx-auto group-hover:rotate-6 transition-transform">
+              <span class="text-4xl">🚀</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-3 text-white">Acreditación</h3>
+            <p class="text-blue-100 text-sm leading-relaxed mb-6">
+              Cumpliendo los estándares de calidad del SINEACE para la excelencia internacional.
+            </p>
+            <div class="w-full h-1 bg-blue-800 rounded-full overflow-hidden">
+              <div class="w-3/4 h-full bg-blue-300 shadow-[0_0_10px_bg-blue-300]"></div>
+            </div>
+            <span class="text-[10px] text-blue-300 mt-2 block uppercase tracking-widest">En Proceso</span>
+          </div>
+        </div>
+
+        <div class="dark-glass-card rounded-[2rem] p-8 hover:bg-slate-800/50 transition flex flex-col justify-center">
+          <h3 class="text-xl font-bold mb-6 text-amber-400 flex items-center gap-3">
+            <span class="bg-amber-400/10 p-2 rounded-lg border border-amber-400/20">🔬</span> Investigación
+          </h3>
+          <ul class="space-y-4 text-sm text-slate-300">
+            {['Grupos de estudio y semilleros', 'Publicaciones indexadas', 'Innovación tecnológica'].map((item) => (
+                <li class="flex items-center gap-3 group/item">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400 group-hover/item:shadow-[0_0_8px_#fbbf24] transition"></span>
+                  <span class="group-hover/item:text-white transition">{item}</span>
+                </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="md:col-span-2 dark-glass-card rounded-[2rem] p-8 flex flex-col md:flex-row items-center gap-8 group hover:border-slate-600 transition">
+          <div class="flex-1">
+            <h3 class="text-2xl font-bold mb-3 text-white">Laboratorios High-Tech</h3>
+            <p class="text-slate-400 text-sm mb-6 leading-relaxed">Infraestructura especializada en robótica, desarrollo de software e inteligencia artificial equipada para el futuro.</p>
+            <a href="/infraestructura" class="inline-flex items-center gap-2 text-blue-400 font-bold text-sm hover:text-white transition">
+              Explorar instalaciones <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+          <div class="w-full md:w-72 h-40 bg-slate-900 rounded-2xl overflow-hidden relative shadow-2xl">
+            <img src="/img/lab-placeholder.jpg" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition duration-700" alt="Laboratorios" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
 </Layout>

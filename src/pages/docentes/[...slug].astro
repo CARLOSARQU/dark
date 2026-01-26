@@ -1,0 +1,181 @@
+---
+// Archivo: src/pages/docentes/[...slug].astro
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import {
+    ChevronLeft,
+    GraduationCap,
+    Briefcase,
+    Linkedin,
+    Mail,
+    Award,
+    User,
+    CheckCircle2
+} from 'lucide-react';
+
+export async function getStaticPaths() {
+    const docentes = await getCollection('docentes');
+    return docentes.map(entry => ({
+        params: { slug: entry.id }, props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+
+// Helper para iniciales
+const getInitials = (name) => {
+    return name
+        .split(' ')
+        .map(word => word[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
+};
+---
+
+<Layout title={`Perfil: ${entry.data.nombre}`}>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-widget {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Fondo animado */
+        @keyframes move-slow {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 20px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .blob { animation: move-slow 12s infinite ease-in-out alternate; }
+    </style>
+
+    <section class="min-h-screen bg-slate-50 py-24 px-6 relative overflow-hidden flex items-center justify-center">
+
+        <div class="fixed inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-[700px] h-[700px] bg-blue-100/60 rounded-full blur-[120px] blob"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-100/50 rounded-full blur-[100px] blob" style="animation-delay: -5s;"></div>
+        </div>
+
+        <div class="container max-w-5xl mx-auto relative z-10">
+
+            <div class="mb-8">
+                <a href="/docentes" class="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/60 hover:bg-white backdrop-blur-md border border-slate-200 text-slate-500 hover:text-blue-600 font-bold text-sm transition-all shadow-sm">
+                    <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    Volver al directorio
+                </a>
+            </div>
+
+            <div class="glass-panel rounded-[3rem] p-8 md:p-12">
+                <div class="flex flex-col md:flex-row gap-10 items-start">
+
+                    <div class="w-full md:w-1/3 flex flex-col gap-6">
+                        <div class="aspect-square rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 border-4 border-white relative group">
+                            {entry.data.foto ? (
+                                    <img
+                                            src={entry.data.foto}
+                                            alt={entry.data.nombre}
+                                            class="w-full h-full object-cover transition duration-700 group-hover:scale-110"
+                                    />
+                            ) : (
+                                    <div class="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-300">
+                                        <span class="text-6xl font-bold opacity-20">{getInitials(entry.data.nombre)}</span>
+                                    </div>
+                            )}
+
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            {entry.data.linkedin ? (
+                                    <a href={entry.data.linkedin} target="_blank" class="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#0077b5] text-white hover:bg-[#006097] transition shadow-lg shadow-blue-900/20 group">
+                                        <Linkedin className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
+                                        <span class="text-[10px] font-bold uppercase tracking-wider">LinkedIn</span>
+                                    </a>
+                            ) : (
+                                    <div class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-100 text-slate-400 cursor-not-allowed opacity-50">
+                                        <Linkedin className="w-6 h-6 mb-1" />
+                                        <span class="text-[10px] font-bold uppercase tracking-wider">No disp.</span>
+                                    </div>
+                            )}
+
+                            <a href={`mailto:contacto@epis.unap.edu.pe`} class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 transition shadow-lg shadow-slate-900/20 group">
+                                <Mail className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
+                                <span class="text-[10px] font-bold uppercase tracking-wider">Email</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="w-full md:w-2/3 flex flex-col h-full">
+
+                        <div class="mb-8">
+                            <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-extrabold uppercase tracking-wider">
+                            Docente Oficial
+                        </span>
+                                <span class="px-3 py-1 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold uppercase tracking-wider border border-amber-100 flex items-center gap-1">
+                            <Award className="w-3 h-3" />
+                                    {entry.data.grado}
+                        </span>
+                            </div>
+
+                            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 font-title tracking-tight leading-tight mb-4">
+                                {entry.data.nombre}
+                            </h1>
+
+                            <p class="text-xl text-slate-500 font-light flex items-center gap-2">
+                                <Briefcase className="w-5 h-5 text-blue-500" />
+                                {entry.data.cargo}
+                            </p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4 mb-8">
+                            <div class="glass-widget p-5 rounded-2xl flex items-start gap-4 hover:bg-white/60 transition">
+                                <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
+                                    <GraduationCap className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Grado Académico</p>
+                                    <p class="font-bold text-slate-800">
+                                        {entry.data.grado === 'Dr.' ? 'Doctor(a)' :
+                                            entry.data.grado === 'Mg.' ? 'Magíster' :
+                                                entry.data.grado === 'Ing.' ? 'Ingeniero(a)' : entry.data.grado}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="glass-widget p-5 rounded-2xl flex items-start gap-4 hover:bg-white/60 transition">
+                                <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                                    <CheckCircle2 className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Estado</p>
+                                    <p class="font-bold text-slate-800">Activo / Habilitado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto bg-slate-50/50 rounded-3xl p-8 border border-slate-100">
+                            <h3 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                                <User className="w-5 h-5 text-slate-400" /> Perfil Profesional
+                            </h3>
+                            <p class="text-slate-500 leading-relaxed font-light">
+                                El docente forma parte de la plana académica de la Escuela Profesional de Ingeniería de Sistemas, contribuyendo con su experiencia en la formación de nuevos profesionales. Especialista en áreas de tecnología y gestión.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</Layout>

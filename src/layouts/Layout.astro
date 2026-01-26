@@ -1,22 +1,92 @@
+---
+import { ClientRouter } from 'astro:transitions'; // Navegación tipo SPA suave
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+    description?: string;
+}
+
+const { title, description = "Escuela Profesional de Ingeniería de Sistemas - UNAP" } = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
+<html lang="es" class="scroll-smooth">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<meta name="generator" content={Astro.generator} />
+	<meta name="description" content={description} />
+	<title>{title}</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+
+	<ClientRouter />
+
+	<style is:global>
+		/* 1. TIPOGRAFÍA BASE */
+		:root {
+			--font-sans: 'Onest', system-ui, sans-serif;
+		}
+
+		html {
+			font-family: var(--font-sans);
+		}
+
+		/* 2. CUSTOM SCROLLBAR (Estilo Mac/Crystal en Windows) */
+		::-webkit-scrollbar {
+			width: 10px;
+			height: 10px;
+		}
+		::-webkit-scrollbar-track {
+			background: #f1f5f9;
+		}
+		::-webkit-scrollbar-thumb {
+			background: #cbd5e1;
+			border-radius: 5px;
+			border: 2px solid #f1f5f9;
+		}
+		::-webkit-scrollbar-thumb:hover {
+			background: #94a3b8;
+		}
+
+		/* 3. SELECCIÓN DE TEXTO */
+		::selection {
+			background-color: #3b82f6; /* Azul UNAP */
+			color: white;
+		}
+
+		/* 4. UTILITIES PARA TÍTULOS */
+		.font-title {
+			font-family: 'Onest', sans-serif;
+			font-weight: 800; /* Extra Bold */
+		}
+
+		/* 5. PAGE TRANSITIONS (Suavizar el cambio de página) */
+		@keyframes fade-in {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		main {
+			animation: fade-in 0.5s ease-out;
+		}
+	</style>
+</head>
+
+<body class="bg-slate-50 antialiased flex flex-col min-h-screen text-slate-700 selection:bg-blue-600 selection:text-white">
+        <Navbar />
+
+        <main data-pagefind-body class="flex-grow pt-24 min-h-[80vh]">
+			<slot />
+		</main>
+
+        <Footer />
+
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
