@@ -8,8 +8,9 @@ import {
     Share2,
     Clock,
     User,
-    Bookmark
 } from 'lucide-react';
+
+export const prerender = true;
 
 export async function getStaticPaths() {
     const blogEntries = await getCollection('noticias');
@@ -70,7 +71,8 @@ const fechaFormateada = entry.data.fecha.toLocaleDateString('es-PE', {
         }
         .prose-custom h3 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 2em; }
         .prose-custom ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.5em; }
-        .prose-custom li { margin-bottom: 0.5em; marker: text-blue-500; }
+        .prose-custom li { margin-bottom: 0.5em; }
+        .prose-custom ul li::marker { color: #3b82f6; }
         .prose-custom blockquote {
             border-left: 4px solid #3b82f6;
             padding-left: 1.5rem;
@@ -88,7 +90,7 @@ const fechaFormateada = entry.data.fecha.toLocaleDateString('es-PE', {
         }
     </style>
 
-    <section class="bg-slate-50 min-h-screen pb-24 pt-32 relative overflow-hidden">
+    <section class="bg-slate-50 min-h-screen pb-24 pt-2 relative overflow-hidden">
 
         <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div class="absolute top-0 right-[-10%] w-[800px] h-[800px] bg-blue-100/50 rounded-full blur-[120px] blob-bg"></div>
@@ -164,12 +166,13 @@ const fechaFormateada = entry.data.fecha.toLocaleDateString('es-PE', {
                         </div>
 
                         <div class="flex gap-3">
-                            <button class="p-3 rounded-full bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white transition shadow-sm hover:shadow-lg hover:-translate-y-1" title="Guardar">
-                                <Bookmark className="w-5 h-5" />
-                            </button>
-                            <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-blue-600 transition shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1">
+                            <button
+                                id="share-btn"
+                                data-title={entry.data.titulo}
+                                class="flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-blue-600 transition shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1"
+                            >
                                 <Share2 className="w-4 h-4" />
-                                Compartir
+                                <span id="share-label">Compartir</span>
                             </button>
                         </div>
                     </div>
@@ -179,4 +182,24 @@ const fechaFormateada = entry.data.fecha.toLocaleDateString('es-PE', {
 
         </article>
     </section>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    const btn = document.getElementById('share-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      const label = document.getElementById('share-label');
+      const title = btn.dataset.title || document.title;
+      const url = window.location.href;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          if (label) { label.textContent = '¡Enlace copiado!'; setTimeout(() => { label.textContent = 'Compartir'; }, 2000); }
+        }
+      } catch {}
+    });
+  });
+</script>
 </Layout>

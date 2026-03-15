@@ -6,12 +6,13 @@ import {
     Clock,
     MapPin,
     ArrowLeft,
-    Ticket,
     Maximize2,
     ImageOff,
     Share2,
     CalendarDays
 } from 'lucide-react';
+
+export const prerender = true;
 
 export async function getStaticPaths() {
     const eventos = await getCollection('eventos');
@@ -57,7 +58,7 @@ const esFuturo = entry.data.fechaHora >= new Date();
         .animate-blob { animation: move-slow 10s infinite ease-in-out alternate; }
     </style>
 
-    <section class="min-h-screen bg-slate-50 pb-20 pt-32 relative overflow-hidden">
+    <section class="min-h-screen bg-slate-50 pb-20 pt-2 relative overflow-hidden">
 
         <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
             <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-300/20 rounded-full blur-[120px] animate-blob"></div>
@@ -72,8 +73,9 @@ const esFuturo = entry.data.fechaHora >= new Date();
                     Volver a Agenda
                 </a>
 
-                <button class="inline-flex items-center gap-2 text-slate-400 hover:text-slate-800 transition p-2 rounded-full hover:bg-white/50" title="Compartir evento">
-                    <Share2 className="w-5 h-5" />
+                <button id="share-btn" data-title={entry.data.nombre} class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition px-4 py-2 rounded-full hover:bg-white/80 border border-transparent hover:border-slate-200 shadow-sm font-bold text-sm" title="Compartir evento">
+                    <Share2 className="w-4 h-4" />
+                    <span id="share-label">Compartir</span>
                 </button>
             </div>
 
@@ -154,35 +156,16 @@ const esFuturo = entry.data.fechaHora >= new Date();
                         </div>
 
                         <div class="mt-12 pt-8 border-t border-slate-200/50">
-                            {esFuturo ? (
-                                    <div class="relative bg-slate-900 rounded-2xl p-1 overflow-hidden shadow-2xl shadow-blue-900/20 group hover:scale-[1.01] transition-transform duration-300">
-                                        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-20"></div>
-
-                                        <div class="relative bg-slate-900 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.5)]">
-                                                    <Ticket className="w-6 h-6" />
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-bold text-white text-lg">Inscripciones Abiertas</h4>
-                                                    <p class="text-slate-400 text-sm">Asegura tu participación registrándote hoy.</p>
-                                                </div>
-                                            </div>
-                                            <button class="w-full md:w-auto px-8 py-3 bg-white text-slate-900 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-lg flex items-center justify-center gap-2">
-                                                Registrarme ahora <ArrowLeft className="w-4 h-4 rotate-180" />
-                                            </button>
-                                        </div>
+                            {!esFuturo && (
+                                <div class="bg-slate-100 rounded-2xl p-6 border border-slate-200 text-center flex flex-col items-center justify-center gap-3">
+                                    <span class="bg-slate-200 p-3 rounded-full text-slate-500">
+                                        <Calendar className="w-6 h-6" />
+                                    </span>
+                                    <div>
+                                        <h4 class="font-bold text-slate-700">Evento Finalizado</h4>
+                                        <p class="text-sm text-slate-500">Este evento ya se llevó a cabo.</p>
                                     </div>
-                            ) : (
-                                    <div class="bg-slate-100 rounded-2xl p-6 border border-slate-200 text-center flex flex-col items-center justify-center gap-3 opacity-75 hover:opacity-100 transition-opacity">
-                                <span class="bg-slate-200 p-3 rounded-full text-slate-500">
-                                    <Calendar className="w-6 h-6" />
-                                </span>
-                                        <div>
-                                            <h4 class="font-bold text-slate-700">Evento Finalizado</h4>
-                                            <p class="text-sm text-slate-500">Este evento ya se llevó a cabo.</p>
-                                        </div>
-                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -191,4 +174,24 @@ const esFuturo = entry.data.fechaHora >= new Date();
             </div>
         </div>
     </section>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    const btn = document.getElementById('share-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      const label = document.getElementById('share-label');
+      const title = btn.dataset.title || document.title;
+      const url = window.location.href;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          if (label) { label.textContent = '¡Copiado!'; setTimeout(() => { label.textContent = 'Compartir'; }, 2000); }
+        }
+      } catch {}
+    });
+  });
+</script>
 </Layout>

@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import {
     History,
@@ -11,7 +12,7 @@ import {
     ArrowRight,
     BrainCircuit,
     ScrollText,
-    Sparkles
+    Sparkles,
 } from 'lucide-react';
 
 // Autoridades
@@ -95,7 +96,7 @@ const academicObjectives = [
         }
     </style>
 
-    <section class="relative bg-slate-50 pt-32 pb-24 overflow-hidden">
+    <section class="relative bg-slate-50 pt-2 pb-24 overflow-hidden">
 
         <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-200/40 rounded-full blur-[100px] animate-float-slow"></div>
         <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-200/30 rounded-full blur-[100px] animate-float"></div>
@@ -163,9 +164,9 @@ const academicObjectives = [
                         <p>
                             En 2006, consolidamos nuestra identidad integrándonos a la <strong>Facultad de Ingeniería de Sistemas e Informática</strong>, convirtiéndonos en el referente histórico de la tecnología en la universidad.
                         </p>
-                        <div class="pt-4">
-                            <a href="#" class="inline-flex items-center text-blue-600 font-bold hover:gap-3 gap-2 transition-all">
-                                Leer reseña completa <ArrowRight className="w-4 h-4" />
+                        <div class="pt-4 flex flex-wrap gap-4">
+                            <a href="/malla-curricular" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-600/20 hover:-translate-y-0.5">
+                                <ScrollText className="w-4 h-4" /> Ver Malla Curricular
                             </a>
                         </div>
                     </div>

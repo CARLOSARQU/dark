@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 // Archivo: src/pages/eventos/index.astro
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
@@ -58,7 +59,7 @@ const pasados = allEventos
     }
   </style>
 
-  <section class="relative bg-slate-50 pt-32 pb-16 overflow-hidden">
+  <section class="relative bg-slate-50 pt-2 pb-16 overflow-hidden">
     <div class="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-200/40 rounded-full blur-[100px] animate-float-slow"></div>
     <div class="absolute top-[20%] right-[-5%] w-[400px] h-[400px] bg-blue-200/40 rounded-full blur-[80px]"></div>
 
@@ -80,7 +81,7 @@ const pasados = allEventos
   <section class="pb-24 px-6 bg-slate-50 min-h-[60vh] relative z-10">
     <div class="container mx-auto max-w-5xl">
 
-      <div class="mb-24">
+      <div class="mb-24 pt-4">
         <div class="flex items-center justify-between mb-8 px-2">
           <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-3">
             <span class="p-2 bg-blue-100 rounded-xl text-blue-600"><Sparkles className="w-5 h-5" /></span>

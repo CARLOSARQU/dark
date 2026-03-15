@@ -13,7 +13,7 @@ const logoSrc = "/logo.webp";
     data-menu-open="false"
     class="fixed top-0 w-full z-50 transition-all duration-500 border-b border-transparent
     data-[scroll=true]:bg-white/80 data-[scroll=true]:backdrop-blur-xl data-[scroll=true]:border-slate-200/50 data-[scroll=true]:shadow-sm
-    data-[menu-open=true]:bg-white"
+    data-[menu-open=true]:!bg-white data-[menu-open=true]:!backdrop-blur-none data-[menu-open=true]:!shadow-none data-[menu-open=true]:!border-transparent"
 >
   <div
       id="nav-container"
@@ -29,7 +29,7 @@ const logoSrc = "/logo.webp";
       />
 
       <div class="flex flex-col transition-all duration-300 origin-left">
-        <span class="text-unap-blue font-bold text-sm sm:text-base md:text-lg leading-tight tracking-wide font-title text-slate-900">
+        <span class="text-unap-blue font-bold text-sm sm:text-base md:text-lg leading-tight tracking-wide font-title">
           EP. INGENIERÍA DE SISTEMAS
         </span>
         <span class="text-[10px] sm:text-xs text-slate-500 font-medium tracking-[0.2em] uppercase">
@@ -44,22 +44,17 @@ const logoSrc = "/logo.webp";
           const isActive = currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
           return (
               <li>
-                {link.isButton ? (
-                    <a href={link.href} class="px-6 py-2.5 bg-unap-blue text-white rounded-full hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20 hover:-translate-y-0.5 font-bold text-xs tracking-wide">
-                      {link.label}
-                    </a>
-                ) : (
-                    <a href={link.href} class:list={[
-                      "text-sm font-bold uppercase tracking-wider transition-colors relative group/link py-2",
-                      isActive ? "text-unap-blue" : "text-slate-600 hover:text-unap-blue"
+                    <a href={link.href} {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})} class:list={[
+                      "text-sm font-bold uppercase tracking-wider transition-all duration-200 relative group/link px-3 py-1.5 rounded-lg",
+                      isActive
+                        ? "text-blue-700 bg-blue-50 shadow-sm shadow-blue-100"
+                        : "text-slate-600 hover:text-unap-blue hover:bg-slate-50"
                     ]}>
                       {link.label}
-                      <span class:list={[
-                        "absolute bottom-0 left-0 h-0.5 bg-unap-blue transition-all duration-300 rounded-full",
-                        isActive ? "w-full" : "w-0 group-hover/link:w-full"
-                      ]}></span>
+                      {!isActive && (
+                        <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-unap-blue transition-all duration-300 rounded-full w-0 group-hover/link:w-3/4"></span>
+                      )}
                     </a>
-                )}
               </li>
           );
         })}
@@ -100,7 +95,7 @@ const logoSrc = "/logo.webp";
 
   <div
       id="mobile-menu"
-      class="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-all duration-500 data-[open=true]:opacity-100 data-[open=true]:pointer-events-auto"
+      class="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-all duration-500 data-[open=true]:opacity-100 data-[open=true]:pointer-events-auto"
   >
     <nav class="flex flex-col items-center gap-6 w-full px-8">
       {NAV_LINKS.filter(link => link.label !== 'Contacto').map((link, index) => (
@@ -113,9 +108,6 @@ const logoSrc = "/logo.webp";
             {link.label}
           </a>
       ))}
-      <a href="/contacto" class="mt-6 px-8 py-4 bg-unap-blue text-white rounded-full font-bold shadow-xl shadow-blue-900/20 transform translate-y-4 opacity-0 transition-all" style="transition-delay: 400ms" data-mobile-link>
-        Contáctanos
-      </a>
     </nav>
   </div>
 </nav>
@@ -185,7 +177,6 @@ const logoSrc = "/logo.webp";
 </style>
 
 <script is:inline>
-  // Script arreglado: JavaScript Puro (Sin tipos de TS para que funcione en el navegador)
   document.addEventListener('astro:page-load', () => {
 
     // 1. NAVBAR SCROLL
@@ -244,7 +235,6 @@ const logoSrc = "/logo.webp";
     async function loadPagefind() {
       if(pagefind) return true;
       try {
-        // Import dinámico seguro
         pagefind = await import('/pagefind/pagefind.js');
         await pagefind.init();
         return true;
@@ -255,7 +245,6 @@ const logoSrc = "/logo.webp";
     }
 
     const handleSearch = async (query) => {
-      // Ocultar todo
       if(elInitial) elInitial.classList.add('hidden');
       if(elLoading) elLoading.classList.add('hidden');
       if(searchResults) searchResults.classList.add('hidden');
@@ -339,6 +328,9 @@ const logoSrc = "/logo.webp";
       if((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         openModal();
+      }
+      if(e.key === 'Escape' && searchModal?.open) {
+        closeModal();
       }
     });
   });

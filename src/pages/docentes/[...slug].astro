@@ -13,6 +13,8 @@ import {
     CheckCircle2
 } from 'lucide-react';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
     const docentes = await getCollection('docentes');
     return docentes.map(entry => ({
@@ -23,10 +25,10 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 
 // Helper para iniciales
-const getInitials = (name) => {
+const getInitials = (name: string) => {
     return name
         .split(' ')
-        .map(word => word[0])
+        .map((word: string) => word[0])
         .join('')
         .substring(0, 2)
         .toUpperCase();
@@ -58,7 +60,7 @@ const getInitials = (name) => {
         .blob { animation: move-slow 12s infinite ease-in-out alternate; }
     </style>
 
-    <section class="min-h-screen bg-slate-50 py-24 px-6 relative overflow-hidden flex items-center justify-center">
+    <section class="min-h-screen bg-slate-50 py-2 px-6 relative overflow-hidden flex items-center justify-center">
 
         <div class="fixed inset-0 overflow-hidden pointer-events-none">
             <div class="absolute top-[-10%] left-[-10%] w-[700px] h-[700px] bg-blue-100/60 rounded-full blur-[120px] blob"></div>

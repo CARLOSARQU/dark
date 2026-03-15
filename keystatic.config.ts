@@ -1,5 +1,5 @@
 // keystatic.config.ts
-import { config, fields, collection } from '@keystatic/core';
+import { config, fields, collection, singleton } from '@keystatic/core';
 
 export default config({
     storage: process.env.NODE_ENV === 'development'
@@ -7,10 +7,10 @@ export default config({
             kind: 'local'
         }
         : {
-            kind: 'cloud', // En producción, se conecta a GitHub
+            kind: 'cloud',
         },
     cloud: {
-        project: 'nombre-de-tu-equipo/nombre-de-tu-proyecto',
+        project: 'sistemas/dark',
     },
     collections: {
         // 1. SECCIÓN NOTICIAS
@@ -93,8 +93,46 @@ export default config({
             directory: 'public/img/docentes',
             publicPath: '/img/docentes/',
             }),
-            linkedin: fields.url({ label: 'Perfil de LinkedIn (Opcional)' }),
+            linkedin: fields.url({ label: 'Perfil de LinkedIn (Opcional)', validation: { isRequired: false } }),
         },
+        }),
+    },
+
+    singletons: {
+        mallaCurricular: singleton({
+            label: 'Malla Curricular',
+            path: 'src/data/malla-curricular',
+            schema: {
+                planNombre: fields.text({
+                    label: 'Nombre del Plan',
+                    description: 'Ej: Plan de Estudios 2022',
+                    validation: { isRequired: true },
+                }),
+                vigencia: fields.text({
+                    label: 'Años de Vigencia',
+                    description: 'Ej: 2022 – 2027',
+                    validation: { isRequired: true },
+                }),
+                totalCreditos: fields.text({
+                    label: 'Total de Créditos',
+                    description: 'Número total de créditos del plan',
+                }),
+                resolucion: fields.text({
+                    label: 'N° de Resolución de Aprobación',
+                    description: 'Ej: R.R. N° 0191-2022-R-UNA',
+                }),
+                archivoPdf: fields.file({
+                    label: 'Archivo PDF de la Malla Curricular',
+                    description: 'Sube el PDF oficial desde tu computador.',
+                    directory: 'public/docs/malla',
+                    publicPath: '/docs/malla/',
+                }),
+                notas: fields.text({
+                    label: 'Notas adicionales (opcional)',
+                    multiline: true,
+                    description: 'Información complementaria visible en la página.',
+                }),
+            },
         }),
     },
 });

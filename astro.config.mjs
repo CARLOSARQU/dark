@@ -11,8 +11,8 @@ export default defineConfig({
   },
   integrations: [keystatic(), react(), markdoc()],
 
-  // Esto es vital:
-  output: 'static',
+  // server: Keystatic necesita SSR; las páginas con getStaticPaths() siguen siendo estáticas
+  output: 'server',
   adapter: node({
     mode: 'standalone',
   }),

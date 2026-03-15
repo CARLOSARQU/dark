@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 // Archivo: src/pages/noticias/index.astro
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
@@ -6,7 +7,6 @@ import {
   Calendar,
   ArrowRight,
   Newspaper,
-  Search,
   Sparkles,
   Clock
 } from 'lucide-react';
@@ -32,19 +32,12 @@ const restNoticias = allNoticias.slice(1);
     }
     .animate-blob { animation: move-blob 10s infinite alternate; }
 
-    .glass-input {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    }
-
     .hero-card-gradient {
       background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.9) 100%);
     }
   </style>
 
-  <section class="relative bg-slate-50 pt-32 pb-16 overflow-hidden">
+  <section class="relative bg-slate-50 pt-2 pb-16 overflow-hidden">
     <div class="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-blue-200/40 rounded-full blur-[100px] animate-blob"></div>
     <div class="absolute top-[10%] right-[-10%] w-[500px] h-[500px] bg-cyan-100/40 rounded-full blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
 
@@ -61,13 +54,6 @@ const restNoticias = allNoticias.slice(1);
         Descubre los logros, investigaciones y eventos que marcan el rumbo de nuestra comunidad universitaria.
       </p>
 
-      <div class="max-w-xl mx-auto relative group">
-        <div class="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full opacity-20 group-hover:opacity-40 transition duration-500 blur-lg"></div>
-        <div class="relative flex items-center glass-input rounded-full px-6 py-4">
-          <Search className="w-5 h-5 text-slate-400 mr-4" />
-          <input type="text" placeholder="Buscar noticias, artículos o eventos..." class="w-full bg-transparent border-none outline-none text-slate-700 placeholder:text-slate-400" />
-        </div>
-      </div>
     </div>
   </section>
 
@@ -77,7 +63,7 @@ const restNoticias = allNoticias.slice(1);
       {allNoticias.length > 0 ? (
           <>
             {featured && (
-                <div class="mb-16">
+                <div class="mb-16 pt-2">
                   <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-amber-500" /> Lo más reciente
                   </h2>
@@ -123,9 +109,9 @@ const restNoticias = allNoticias.slice(1);
                 </div>
             )}
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {restNoticias.map((item) => (
-                  <article class="group bg-white rounded-[2rem] shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-300 border border-slate-100 flex flex-col overflow-hidden relative">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="news-grid">
+              {restNoticias.map((item, index) => (
+                  <article class:list={["group bg-white rounded-[2rem] shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-300 border border-slate-100 flex flex-col overflow-hidden relative", index >= 5 ? "hidden" : ""]} data-news-card>
 
                     <div class="h-64 overflow-hidden relative rounded-t-[2rem] m-2 mb-0">
                       {item.data.portada ? (
@@ -170,13 +156,30 @@ const restNoticias = allNoticias.slice(1);
               ))}
             </div>
 
-            {restNoticias.length > 0 && (
-                <div class="mt-20 text-center">
-                  <button class="px-8 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-full hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all shadow-sm">
+            {restNoticias.length > 5 && (
+                <div class="mt-20 text-center" id="load-more-container">
+                  <button id="load-more-btn" class="px-8 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-full hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all shadow-sm">
                     Cargar más noticias
                   </button>
                 </div>
             )}
+
+            <script is:inline>
+              document.addEventListener('astro:page-load', () => {
+                const btn = document.getElementById('load-more-btn');
+                if (!btn) return;
+                const cards = document.querySelectorAll('[data-news-card]');
+                let shown = 5;
+                btn.addEventListener('click', () => {
+                  const batch = Array.from(cards).slice(shown, shown + 6);
+                  batch.forEach(c => c.classList.remove('hidden'));
+                  shown += 6;
+                  if (shown >= cards.length) {
+                    document.getElementById('load-more-container')?.remove();
+                  }
+                });
+              });
+            </script>
           </>
       ) : (
           // ESTADO VACÍO
