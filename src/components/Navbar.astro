@@ -93,24 +93,26 @@ const logoSrc = "/logo.webp";
     </div>
   </div>
 
-  <div
-      id="mobile-menu"
-      class="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-all duration-500 data-[open=true]:opacity-100 data-[open=true]:pointer-events-auto"
-  >
-    <nav class="flex flex-col items-center gap-6 w-full px-8">
-      {NAV_LINKS.filter(link => link.label !== 'Contacto').map((link, index) => (
-          <a
-              href={link.href}
-              class="text-xl font-bold uppercase tracking-wider text-slate-800 hover:text-unap-blue transition-all transform translate-y-4 opacity-0"
-              style={`transition-delay: ${index * 100}ms`}
-              data-mobile-link
-          >
-            {link.label}
-          </a>
-      ))}
-    </nav>
-  </div>
 </nav>
+
+<div
+    id="mobile-menu"
+    data-open="false"
+    class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center opacity-0 pointer-events-none transition-all duration-500 data-[open=true]:opacity-100 data-[open=true]:pointer-events-auto"
+>
+  <nav class="flex flex-col items-center gap-6 w-full px-8">
+    {NAV_LINKS.filter(link => link.label !== 'Contacto').map((link, index) => (
+        <a
+            href={link.href}
+            class="text-xl font-bold uppercase tracking-wider text-slate-800 hover:text-unap-blue transition-all transform translate-y-4 opacity-0"
+            style={`transition-delay: ${index * 100}ms`}
+            data-mobile-link
+        >
+          {link.label}
+        </a>
+    ))}
+  </nav>
+</div>
 
 <dialog
     id="search-modal"
@@ -168,7 +170,7 @@ const logoSrc = "/logo.webp";
   nav[data-menu-open="true"] #line-2 { opacity: 0; }
   nav[data-menu-open="true"] #line-3 { transform: rotate(-45deg) translate(5px, -6px); }
 
-  nav[data-menu-open="true"] [data-mobile-link] {
+  #mobile-menu[data-open="true"] [data-mobile-link] {
     transform: translateY(0);
     opacity: 1;
   }
@@ -202,12 +204,28 @@ const logoSrc = "/logo.webp";
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileLinks = document.querySelectorAll('[data-mobile-link]');
 
+    let savedScrollY = 0;
+
+    const lockScroll = () => {
+      savedScrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.width = '100%';
+    };
+
+    const unlockScroll = () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, savedScrollY);
+    };
+
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
         const isOpen = nav?.getAttribute('data-menu-open') === 'true';
         nav?.setAttribute('data-menu-open', (!isOpen).toString());
         mobileMenu?.setAttribute('data-open', (!isOpen).toString());
-        document.body.style.overflow = !isOpen ? 'hidden' : '';
+        if (!isOpen) lockScroll(); else unlockScroll();
       });
     }
 
@@ -215,7 +233,7 @@ const logoSrc = "/logo.webp";
       link.addEventListener('click', () => {
         nav?.setAttribute('data-menu-open', 'false');
         mobileMenu?.setAttribute('data-open', 'false');
-        document.body.style.overflow = '';
+        unlockScroll();
       });
     });
 
